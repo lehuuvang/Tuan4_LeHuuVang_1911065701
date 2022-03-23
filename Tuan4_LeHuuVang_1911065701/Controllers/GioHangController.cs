@@ -169,7 +169,8 @@ namespace Tuan4_LeHuuVang_1911065701.Controllers
                 ctdh.soluong = item.isoluong;
                 ctdh.gia = (decimal)item.giaban;
                 s = data.Saches.Single(n => n.masach == item.masach);
-                s.soluongton = ctdh.soluong;
+                var thaydoislton = s.soluongton - ctdh.soluong;
+                s.soluongton = thaydoislton;
                 data.SubmitChanges();
                 data.ChiTietDonHangs.InsertOnSubmit(ctdh);
             }
