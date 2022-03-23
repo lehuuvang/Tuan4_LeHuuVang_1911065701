@@ -21,8 +21,10 @@ namespace Tuan4_LeHuuVang_1911065701.Models
         public int isoluong { get; set; }
         [Display(Name = "Thành Tiền")]
         public double dthanhtien { 
-            get { return isoluong * giaban; }
+            get { 
+                return isoluong * giaban; 
                 }
+            }
         public GioHang(int id)
         {
             masach = id;

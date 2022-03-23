@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Windows;
 using Tuan4_LeHuuVang_1911065701.Models;
 namespace Tuan4_LeHuuVang_1911065701.Controllers
 {
@@ -33,20 +34,20 @@ namespace Tuan4_LeHuuVang_1911065701.Controllers
             var E_giaban = Convert.ToDecimal(collection["giaban"]);
             var E_ngaycapnhat = Convert.ToDateTime(collection["ngaycapnhat"]);
             var E_soluongton = Convert.ToInt32(collection["soluongton"]);
-            if (string.IsNullOrEmpty(E_tensach))
+            if (string.IsNullOrEmpty(E_tensach) || E_giaban == int.Parse(string.Empty))
             {
                 ViewData["Error"] = "Don't empty!";
             }
             else
-            {
-                s.tensach = E_tensach.ToString();
-                s.hinh = E_hinh.ToString();
-                s.giaban = E_giaban;
-                s.ngaycapnhat = E_ngaycapnhat;
-                s.soluongton = E_soluongton;
-                db.Saches.InsertOnSubmit(s);
-                db.SubmitChanges();
-                return RedirectToAction("ListSach");
+            {           
+                    s.tensach = E_tensach.ToString();
+                    s.hinh = E_hinh.ToString();
+                    s.giaban = E_giaban;
+                    s.ngaycapnhat = E_ngaycapnhat;
+                    s.soluongton = E_soluongton;
+                    db.Saches.InsertOnSubmit(s);
+                    db.SubmitChanges();
+                    return RedirectToAction("ListSach");  
             }
             return this.Create();
         }
@@ -62,7 +63,7 @@ namespace Tuan4_LeHuuVang_1911065701.Controllers
             var E_tensach = collection["tensach"];
             var E_hinh = collection["hinh"];
             var E_giaban = Convert.ToDecimal(collection["giaban"]);
-            var E_ngaycapnhat = Convert.ToDateTime(collection["ngaycatnhat"]);
+            var E_ngaycapnhat = Convert.ToDateTime(collection["ngaycapnhat"]);
             var E_soluongton = Convert.ToInt32(collection["soluongton"]);
             E_sach.masach = id;
             if (string.IsNullOrEmpty(E_tensach))

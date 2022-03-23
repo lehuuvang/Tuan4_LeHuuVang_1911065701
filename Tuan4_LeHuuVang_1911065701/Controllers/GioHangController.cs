@@ -34,14 +34,17 @@ namespace Tuan4_LeHuuVang_1911065701.Controllers
             }
             else
             {
+                // Nếu số lượng nhỏ hơn số lượng tồn thì tăng số lượng lên 1
                 if (sanpham.isoluong < sach.soluongton)
                 {
                     sanpham.isoluong++;
                     return Redirect(strURL);
                 }
                 else
+                // nếu số lượng mua lớn hơn số lượng tồn thì in thông báo
                 {
-                    MessageBox.Show("Không đủ sách bán!!!");
+                     MessageBox.Show("Không đủ sách bán!!!");
+                    //ViewBag.Message = "Sách Không Đủ Bán";
                     return RedirectToAction("Index", "Home");
                 }
             }
@@ -124,27 +127,59 @@ namespace Tuan4_LeHuuVang_1911065701.Controllers
             lstGioHang.Clear();
             return RedirectToAction("GioHang");
         }
+        [HttpGet]
         public ActionResult DatHang()
         {
-            List<GioHang> listGioHang = LayGioHang();
-            var ds = listGioHang;
-
-            foreach (var item in ds)
+            if (Session["TaiKhoan"] == null || Session["TaiKhoan"].ToString() == "")
             {
-                var change = data.Saches.Where(x => x.masach == item.masach).FirstOrDefault();
-                if (change != null)
-                {
-                    if (change.soluongton >= item.isoluong)
-                    {
-                        var tempsl = change.soluongton - item.isoluong;
-                        change.soluongton = tempsl;
-                        UpdateModel(change);
-                        data.SubmitChanges();
-                    }
-                }
+                return RedirectToAction("DangNhap", "NguoiDung");
             }
-            return View(listGioHang);
-            listGioHang.Clear();
+            if (Session["GioHang"] == null)
+            {
+                return RedirectToAction("Index", "Sach");
+            }
+            List<GioHang> lstGioHang = LayGioHang();
+            ViewBag.Tongsoluong = TongSoLuong();
+            ViewBag.Tongtien = TongTien();
+            ViewBag.Tốngluongsanpham = TongSoLuongSanPham();
+            return View(lstGioHang);
+        }
+        [HttpPost]
+        public ActionResult DatHang (FormCollection collection)
+        {
+            DonHang dh = new DonHang();
+            KhachHang kh = (KhachHang)Session["TaiKhoan"];
+            Sach s = new Sach();
+            List<GioHang> gh = LayGioHang();
+            var ngaygiao = String.Format("{0: dd/MM/yyyy}", collection["NgayGiao"]);
+
+            dh.makh = kh.makh;
+            dh.ngaydat = DateTime.Now;
+            dh.ngaygiao = DateTime.Parse(ngaygiao);
+            dh.giaohang = false;
+            dh.thanhtoan = false;
+
+            data.DonHangs.InsertOnSubmit(dh);
+            data.SubmitChanges();
+             foreach(var item in gh)
+            {
+                ChiTietDonHang ctdh = new ChiTietDonHang();
+                ctdh.madon = dh.madon;
+                ctdh.masach = item.masach;
+                ctdh.soluong = item.isoluong;
+                ctdh.gia = (decimal)item.giaban;
+                s = data.Saches.Single(n => n.masach == item.masach);
+                s.soluongton = ctdh.soluong;
+                data.SubmitChanges();
+                data.ChiTietDonHangs.InsertOnSubmit(ctdh);
+            }
+            data.SubmitChanges();
+            Session["Giohang"] = null;
+            return RedirectToAction("XacNhanDonHang", "GioHang");
+        }
+        public ActionResult Xacnhandonhang()
+        {
+            return View();
         }
     }
-}
+  }
