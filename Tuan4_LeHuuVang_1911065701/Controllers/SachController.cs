@@ -47,6 +47,7 @@ namespace Tuan4_LeHuuVang_1911065701.Controllers
                 db.Saches.InsertOnSubmit(s);
                 db.SubmitChanges();
                 return RedirectToAction("ListSach");
+                //comment
             }
             return this.Create();
         }
